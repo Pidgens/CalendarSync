@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">calendarsync</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string-array name="calendarArray">
+        <item>Google Calendar</item>
+        <item>Apple Calendar</item>
+        <item>Other Calendar</item>
+    </string-array>
+</resources>
