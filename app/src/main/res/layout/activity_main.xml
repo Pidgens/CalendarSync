@@ -9,8 +9,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/CalendarType"
-        android:paddingTop="25dp"
-        android:paddingBottom="25dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
         android:entries="@array/calendarArray"
         android:spinnerMode="dropdown"
         android:layout_below="@+id/textView"
@@ -81,9 +81,29 @@
         android:layout_alignLeft="@+id/startView"
         android:layout_alignStart="@+id/startView" />
 
-    <!--<DatePicker-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/dpResult" />-->
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/details"
+        android:layout_below="@+id/endButton"
+        android:paddingTop="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/endView"
+        android:layout_alignEnd="@+id/endView"
+        android:hint="Details of event..."
+        android:inputType="textCapSentences|textMultiLine"
+        android:background="@null"
+        android:text="" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:id="@+id/button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/endView"
+        android:layout_alignEnd="@+id/endView" />
 
 </RelativeLayout>

@@ -13,6 +13,9 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
 
 import android.accounts.AccountManager;
+import android.widget.TextView.OnEditorActionListener;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -64,6 +67,8 @@ public class MainActivity extends Activity {
     private TextView endView;
     private int day, month, year;
     private Button startButton;
+    private EditText details;
+    private Button submit_button;
     private Button endButton;
 
     static final int END_DATEPICKER_NUMBER=998;
@@ -210,9 +215,6 @@ public class MainActivity extends Activity {
             startView.setText(new StringBuilder().append(month + 1)
                     .append("-").append(day).append("-").append(year)
                     .append(" "));
-
-            // set selected date into datepicker also
-//            dpResult.init(year, month, day, null);
 
         }
     };
