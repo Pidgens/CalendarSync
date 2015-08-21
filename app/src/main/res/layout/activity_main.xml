@@ -9,6 +9,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/CalendarType"
+        android:paddingTop="25dp"
+        android:paddingBottom="25dp"
         android:entries="@array/calendarArray"
         android:spinnerMode="dropdown"
         android:layout_below="@+id/textView"
@@ -29,7 +31,7 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="Start Date"
         android:layout_marginTop="15dp"
         android:id="@+id/startButton"
         android:onClick="setDate"
@@ -41,29 +43,41 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="End Date"
         android:layout_marginTop="10dp"
         android:id="@+id/endButton"
         android:onClick="setDate"
         android:layout_below="@+id/startButton"
         android:layout_alignLeft="@+id/startButton"
-        android:layout_alignStart="@+id/startButton" />
+        android:layout_alignStart="@+id/startButton"
+        android:layout_toLeftOf="@+id/endView"
+        android:layout_toStartOf="@+id/endView" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Text"
+        android:textSize="18dp"
         android:id="@+id/startView"
-        android:layout_alignBottom="@+id/startButton"
+        android:layout_alignTop="@+id/startButton"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:layout_alignBottom="@+id/startButton"
+        android:layout_toRightOf="@+id/startButton"
+        android:layout_toEndOf="@+id/startButton" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Text"
+        android:gravity="center"
+        android:textSize="18dp"
         android:id="@+id/endView"
         android:layout_alignBottom="@+id/endButton"
+        android:layout_alignTop="@+id/endButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignLeft="@+id/startView"
         android:layout_alignStart="@+id/startView" />
 

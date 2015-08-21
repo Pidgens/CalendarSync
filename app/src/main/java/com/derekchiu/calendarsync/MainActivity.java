@@ -66,7 +66,8 @@ public class MainActivity extends Activity {
     private Button startButton;
     private Button endButton;
 
-    static final int DATEPICKER_NUMBER = 999;
+    static final int END_DATEPICKER_NUMBER=998;
+    static final int START_DATEPICKER_NUMBER = 999;
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
@@ -130,14 +131,13 @@ public class MainActivity extends Activity {
 
         mService = new com.google.api.services.calendar.Calendar.Builder(
                 transport, jsonFactory, credential)
-                .setApplicationName("Google Calendar API Android Quickstart")
+                .setApplicationName("Google Calendar API")
                 .build();
     }
 
 
     public void setCurrentDateOnView() {
         startView = (TextView) findViewById(R.id.startView);
-        endView = (TextView) findViewById(R.id.endView);
 //        dpResult = (DatePicker) findViewById(R.id.dpResult);
 
         final Calendar c = Calendar.getInstance();
@@ -150,6 +150,7 @@ public class MainActivity extends Activity {
                 // Month is 0 based, just add 1
                 .append(month + 1).append("-").append(day).append("-")
                 .append(year).append(" "));
+
         endView.setText(new StringBuilder()
                 // Month is 0 based, just add 1
                 .append(month + 1).append("-").append(day+1).append("-")
@@ -174,9 +175,10 @@ public class MainActivity extends Activity {
 
         });
         endButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public  void onClick(View v) {
-                showDialog(999);
+            public void onClick(View v) {
+                showDialog(998);
             }
         });
     }
@@ -184,10 +186,12 @@ public class MainActivity extends Activity {
     @Override
     protected Dialog onCreateDialog(int id) {
         switch (id) {
-            case DATEPICKER_NUMBER:
+            case START_DATEPICKER_NUMBER:
                 // set date picker as current date
                 return new DatePickerDialog(this, datePickerListener,
                         year, month,day);
+            case END_DATEPICKER_NUMBER:
+                return new DatePickerDialog(this, EnddatePickerListener, year, month, day);
         }
         return null;
     }
@@ -207,16 +211,33 @@ public class MainActivity extends Activity {
                     .append("-").append(day).append("-").append(year)
                     .append(" "));
 
-
-            endView.setText(new StringBuilder().append(month + 1)
-                    .append("-").append(day).append("-").append(year)
-                    .append(" "));
-
             // set selected date into datepicker also
 //            dpResult.init(year, month, day, null);
 
         }
     };
+
+    private DatePickerDialog.OnDateSetListener EnddatePickerListener
+            = new DatePickerDialog.OnDateSetListener() {
+
+        // when dialog box is closed, below method will be called.
+        public void onDateSet(DatePicker view, int selectedYear,
+                              int selectedMonth, int selectedDay) {
+            year = selectedYear;
+            month = selectedMonth;
+            day = selectedDay;
+
+            // set selected date into textview
+            endView.setText(new StringBuilder().append(month + 1)
+                    .append("-").append(day).append("-").append(year)
+                    .append(" "));
+
+        }
+    };
+
+
+
+
 
 
 
