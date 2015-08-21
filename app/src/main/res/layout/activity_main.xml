@@ -12,18 +12,64 @@
         android:entries="@array/calendarArray"
         android:spinnerMode="dropdown"
         android:layout_below="@+id/textView"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="CALENDAR TYPE:"
         android:id="@+id/textView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/CalendarType"
-        android:layout_alignEnd="@+id/CalendarType"
+        android:textSize="32dp"
         android:layout_alignParentTop="true"
-        android:textSize="32dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:layout_marginTop="15dp"
+        android:id="@+id/startButton"
+        android:onClick="setDate"
+        android:layout_below="@+id/CalendarType"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:layout_marginTop="10dp"
+        android:id="@+id/endButton"
+        android:onClick="setDate"
+        android:layout_below="@+id/startButton"
+        android:layout_alignLeft="@+id/startButton"
+        android:layout_alignStart="@+id/startButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/startView"
+        android:layout_alignBottom="@+id/startButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/endView"
+        android:layout_alignBottom="@+id/endButton"
+        android:layout_alignLeft="@+id/startView"
+        android:layout_alignStart="@+id/startView" />
+
+    <!--<DatePicker-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/dpResult" />-->
+
 </RelativeLayout>

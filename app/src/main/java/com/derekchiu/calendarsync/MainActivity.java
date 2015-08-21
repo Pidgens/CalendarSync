@@ -26,12 +26,19 @@ import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.view.View;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -47,8 +54,19 @@ public class MainActivity extends Activity {
     private TextView mResultsText;
     final HttpTransport transport = AndroidHttp.newCompatibleTransport();
     final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
-    private Spinner calendarSpinner;
 
+    private Spinner calendarSpinner;
+    private DatePicker dpResult;
+    private DatePicker startDate;
+    private DatePicker endDate;
+    private Calendar currentCalendar;
+    private TextView startView;
+    private TextView endView;
+    private int day, month, year;
+    private Button startButton;
+    private Button endButton;
+
+    static final int DATEPICKER_NUMBER = 999;
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
@@ -62,6 +80,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         LinearLayout activityLayout = new LinearLayout(this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -69,6 +88,15 @@ public class MainActivity extends Activity {
         activityLayout.setLayoutParams(lp);
         activityLayout.setOrientation(LinearLayout.VERTICAL);
         activityLayout.setPadding(16, 16, 16, 16);
+
+        startButton = (Button) findViewById(R.id.startButton);
+        startView = (TextView) findViewById(R.id.startView);
+        endView = (TextView) findViewById(R.id.endView);
+        currentCalendar = Calendar.getInstance();
+        year = currentCalendar.get(Calendar.YEAR);
+        month = currentCalendar.get(Calendar.MONTH);
+        day = currentCalendar.get(Calendar.DAY_OF_MONTH);
+
 
         ViewGroup.LayoutParams tlp = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -87,9 +115,13 @@ public class MainActivity extends Activity {
         mResultsText.setMovementMethod(new ScrollingMovementMethod());
         activityLayout.addView(mResultsText);
 
-        setContentView(activityLayout);
+//        setContentView(activityLayout);
+        setCurrentDateOnView();
+        addListenerOnButton();
 
-        // Initialize credentials and service object.
+/*
+         Initialize credentials and service object.
+*/
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
         credential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
@@ -102,30 +134,110 @@ public class MainActivity extends Activity {
                 .build();
     }
 
+
+    public void setCurrentDateOnView() {
+        startView = (TextView) findViewById(R.id.startView);
+        endView = (TextView) findViewById(R.id.endView);
+//        dpResult = (DatePicker) findViewById(R.id.dpResult);
+
+        final Calendar c = Calendar.getInstance();
+        year = c.get(Calendar.YEAR);
+        month = c.get(Calendar.MONTH);
+        day = c.get(Calendar.DAY_OF_MONTH);
+
+        // set current date into textview
+        startView.setText(new StringBuilder()
+                // Month is 0 based, just add 1
+                .append(month + 1).append("-").append(day).append("-")
+                .append(year).append(" "));
+        endView.setText(new StringBuilder()
+                // Month is 0 based, just add 1
+                .append(month + 1).append("-").append(day+1).append("-")
+                .append(year).append(" "));
+
+
+        // set current date into datepicker
+//        dpResult.init(year, month, day, null);
+    }
+
+    public void addListenerOnButton() {
+
+        startButton = (Button) findViewById(R.id.startButton);
+        endButton = (Button) findViewById(R.id.endButton);
+        startButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showDialog(999);
+
+            }
+
+        });
+        endButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public  void onClick(View v) {
+                showDialog(999);
+            }
+        });
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DATEPICKER_NUMBER:
+                // set date picker as current date
+                return new DatePickerDialog(this, datePickerListener,
+                        year, month,day);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener datePickerListener
+            = new DatePickerDialog.OnDateSetListener() {
+
+        // when dialog box is closed, below method will be called.
+        public void onDateSet(DatePicker view, int selectedYear,
+                              int selectedMonth, int selectedDay) {
+            year = selectedYear;
+            month = selectedMonth;
+            day = selectedDay;
+
+            // set selected date into textview
+            startView.setText(new StringBuilder().append(month + 1)
+                    .append("-").append(day).append("-").append(year)
+                    .append(" "));
+
+
+            endView.setText(new StringBuilder().append(month + 1)
+                    .append("-").append(day).append("-").append(year)
+                    .append(" "));
+
+            // set selected date into datepicker also
+//            dpResult.init(year, month, day, null);
+
+        }
+    };
+
+
+
+
+
+
     /**
      * Called whenever this activity is pushed to the foreground, such as after
      * a call to onCreate().
      */
 
-    public void calendarSpinner() {
-        calendarSpinner = (Spinner) findViewById(R.id.CalendarType);
-        List<String> calendarList = new ArrayList<String>();
-        calendarList.add("Google Calendar");
-        calendarList.add("Apple Calendar");
-        calendarList.add("Additional Calendar");
-        ArrayAdapter<String> dataAdapter =
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (isGooglePlayServicesAvailable()) {
-            refreshResults();
-        } else {
-            mStatusText.setText("Google Play Services required: " +
-                    "after installing, close and relaunch this app.");
-        }
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if (isGooglePlayServicesAvailable()) {
+//            refreshResults();
+//        } else {
+//            mStatusText.setText("Google Play Services required: " +
+//                    "after installing, close and relaunch this app.");
+//        }
+//    }
 
     /**
      * Called when an activity launched here (specifically, AccountPicker
@@ -137,59 +249,59 @@ public class MainActivity extends Activity {
      * @param data Intent (containing result data) returned by incoming
      *     activity result.
      */
-    @Override
-    protected void onActivityResult(
-            int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
-            case REQUEST_GOOGLE_PLAY_SERVICES:
-                if (resultCode != RESULT_OK) {
-                    isGooglePlayServicesAvailable();
-                }
-                break;
-            case REQUEST_ACCOUNT_PICKER:
-                if (resultCode == RESULT_OK && data != null &&
-                        data.getExtras() != null) {
-                    String accountName =
-                            data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                    if (accountName != null) {
-                        credential.setSelectedAccountName(accountName);
-                        SharedPreferences settings =
-                                getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putString(PREF_ACCOUNT_NAME, accountName);
-                        editor.commit();
-                    }
-                } else if (resultCode == RESULT_CANCELED) {
-                    mStatusText.setText("Account unspecified.");
-                }
-                break;
-            case REQUEST_AUTHORIZATION:
-                if (resultCode != RESULT_OK) {
-                    chooseAccount();
-                }
-                break;
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+//    @Override
+//    protected void onActivityResult(
+//            int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        switch(requestCode) {
+//            case REQUEST_GOOGLE_PLAY_SERVICES:
+//                if (resultCode != RESULT_OK) {
+//                    isGooglePlayServicesAvailable();
+//                }
+//                break;
+//            case REQUEST_ACCOUNT_PICKER:
+//                if (resultCode == RESULT_OK && data != null &&
+//                        data.getExtras() != null) {
+//                    String accountName =
+//                            data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+//                    if (accountName != null) {
+//                        credential.setSelectedAccountName(accountName);
+//                        SharedPreferences settings =
+//                                getPreferences(Context.MODE_PRIVATE);
+//                        SharedPreferences.Editor editor = settings.edit();
+//                        editor.putString(PREF_ACCOUNT_NAME, accountName);
+//                        editor.commit();
+//                    }
+//                } else if (resultCode == RESULT_CANCELED) {
+//                    mStatusText.setText("Account unspecified.");
+//                }
+//                break;
+//            case REQUEST_AUTHORIZATION:
+//                if (resultCode != RESULT_OK) {
+//                    chooseAccount();
+//                }
+//                break;
+//        }
+//
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
 
     /**
      * Attempt to get a set of data from the Google Calendar API to display. If the
      * email address isn't known yet, then call chooseAccount() method so the
      * user can pick an account.
      */
-    private void refreshResults() {
-        if (credential.getSelectedAccountName() == null) {
-            chooseAccount();
-        } else {
-            if (isDeviceOnline()) {
-                new ApiAsyncTask(this).execute();
-            } else {
-                mStatusText.setText("No network connection available.");
-            }
-        }
-    }
+//    private void refreshResults() {
+//        if (credential.getSelectedAccountName() == null) {
+//            chooseAccount();
+//        } else {
+//            if (isDeviceOnline()) {
+//                new ApiAsyncTask(this).execute();
+//            } else {
+//                mStatusText.setText("No network connection available.");
+//            }
+//        }
+//    }
 
     /**
      * Clear any existing Google Calendar API data from the TextView and update
@@ -212,56 +324,56 @@ public class MainActivity extends Activity {
      * UI thread).
      * @param dataStrings a List of Strings to populate the main TextView with.
      */
-    public void updateResultsText(final List<String> dataStrings) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (dataStrings == null) {
-                    mStatusText.setText("Error retrieving data!");
-                } else if (dataStrings.size() == 0) {
-                    mStatusText.setText("No data found.");
-                } else {
-                    mStatusText.setText("Data retrieved using" +
-                            " the Google Calendar API:");
-                    mResultsText.setText(TextUtils.join("\n\n", dataStrings));
-                }
-            }
-        });
-    }
+//    public void updateResultsText(final List<String> dataStrings) {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (dataStrings == null) {
+//                    mStatusText.setText("Error retrieving data!");
+//                } else if (dataStrings.size() == 0) {
+//                    mStatusText.setText("No data found.");
+//                } else {
+//                    mStatusText.setText("Data retrieved using" +
+//                            " the Google Calendar API:");
+//                    mResultsText.setText(TextUtils.join("\n\n", dataStrings));
+//                }
+//            }
+//        });
+//    }
 
     /**
      * Show a status message in the list header TextView; called from background
      * threads and async tasks that need to update the UI (in the UI thread).
      * @param message a String to display in the UI header TextView.
      */
-    public void updateStatus(final String message) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mStatusText.setText(message);
-            }
-        });
-    }
+//    public void updateStatus(final String message) {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                mStatusText.setText(message);
+//            }
+//        });
+//    }
 
     /**
      * Starts an activity in Google Play Services so the user can pick an
      * account.
      */
-    private void chooseAccount() {
-        startActivityForResult(
-                credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
-    }
+//    private void chooseAccount() {
+//        startActivityForResult(
+//                credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
+//    }
 
     /**
      * Checks whether the device currently has a network connection.
      * @return true if the device has a network connection, false otherwise.
      */
-    private boolean isDeviceOnline() {
-        ConnectivityManager connMgr =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
-    }
+//    private boolean isDeviceOnline() {
+//        ConnectivityManager connMgr =
+//                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+//        return (networkInfo != null && networkInfo.isConnected());
+//    }
 
     /**
      * Check that Google Play services APK is installed and up to date. Will
@@ -270,17 +382,17 @@ public class MainActivity extends Activity {
      * @return true if Google Play Services is available and up to
      *     date on this device; false otherwise.
      */
-    private boolean isGooglePlayServicesAvailable() {
-        final int connectionStatusCode =
-                GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (GooglePlayServicesUtil.isUserRecoverableError(connectionStatusCode)) {
-            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
-            return false;
-        } else if (connectionStatusCode != ConnectionResult.SUCCESS ) {
-            return false;
-        }
-        return true;
-    }
+//    private boolean isGooglePlayServicesAvailable() {
+//        final int connectionStatusCode =
+//                GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+//        if (GooglePlayServicesUtil.isUserRecoverableError(connectionStatusCode)) {
+//            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
+//            return false;
+//        } else if (connectionStatusCode != ConnectionResult.SUCCESS ) {
+//            return false;
+//        }
+//        return true;
+//    }
 
     /**
      * Display an error dialog showing that Google Play Services is missing
@@ -288,18 +400,18 @@ public class MainActivity extends Activity {
      * @param connectionStatusCode code describing the presence (or lack of)
      *     Google Play Services on this device.
      */
-    void showGooglePlayServicesAvailabilityErrorDialog(
-            final int connectionStatusCode) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
-                        connectionStatusCode,
-                        MainActivity.this,
-                        REQUEST_GOOGLE_PLAY_SERVICES);
-                dialog.show();
-            }
-        });
-    }
+//    void showGooglePlayServicesAvailabilityErrorDialog(
+//            final int connectionStatusCode) {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
+//                        connectionStatusCode,
+//                        MainActivity.this,
+//                        REQUEST_GOOGLE_PLAY_SERVICES);
+//                dialog.show();
+//            }
+//        });
+//    }
 
 }
